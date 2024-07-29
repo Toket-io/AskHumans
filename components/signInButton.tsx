@@ -19,7 +19,10 @@ const SignInButton: React.FC<SignInButtonProps> = ({ onClick }) => {
           height={24}
         />
       }
-      onClick={onClick}
+      onClick={(e) => {
+        e.preventDefault();
+        onClick();
+      }}
       sx={{
         backgroundColor: "white",
         color: "black",
