@@ -1,22 +1,32 @@
 import Head from "next/head";
 import Questionnaire from "../components/questionnaire";
+import Layout from "../components/layout";
 
 const questions = [
-  { id: 1, text: "What is your name?", type: "text" },
+  {
+    id: 1,
+    text: "Do you think there should be a farewell match for Angel Di María?",
+    type: "option",
+    options: ["Yes 👍", "No 👎"],
+  },
   {
     id: 2,
-    text: "What is your favorite color?",
+    text: "Where do you think the farewell match should be held?",
     type: "option",
-    options: ["Red", "Blue", "Green", "Yellow"],
+    options: [
+      "Monumental 🇦🇷",
+      "Cementerio de elefantes 🇦🇷",
+      "Bernabeu 🇪🇸",
+      "None",
+    ],
   },
-  { id: 3, text: "Describe yourself in one sentence.", type: "text" },
 ];
 
 export default function Home() {
   return (
-    <div>
+    <Layout>
       <Head>
-        <title>Questionnaire App</title>
+        <title>Ask Humans</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <main
@@ -30,6 +40,6 @@ export default function Home() {
       >
         <Questionnaire questions={questions} />
       </main>
-    </div>
+    </Layout>
   );
 }

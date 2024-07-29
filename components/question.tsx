@@ -1,4 +1,10 @@
 import React from "react";
+import Box from "@mui/joy/Box";
+import FormLabel from "@mui/joy/FormLabel";
+import Radio from "@mui/joy/Radio";
+import RadioGroup from "@mui/joy/RadioGroup";
+import Sheet from "@mui/joy/Sheet";
+import Input from "@mui/joy/Input";
 
 interface QuestionProps {
   question: {
@@ -13,53 +19,100 @@ interface QuestionProps {
 const Question: React.FC<QuestionProps> = ({ question, onChange }) => {
   if (question.type === "text") {
     return (
-      <div style={{ marginBottom: "16px" }}>
-        <label style={{ display: "block", marginBottom: "8px" }}>
+      <Box sx={{ width: "100%", marginBottom: "16px" }}>
+        <FormLabel
+          id={`question-${question.id}`}
+          sx={{
+            mb: 2,
+            fontWeight: "xl",
+            textTransform: "uppercase",
+            fontSize: "xs",
+            letterSpacing: "0.15rem",
+          }}
+        >
           {question.text}
-        </label>
-        <input
+        </FormLabel>
+        <Input
           type="text"
-          style={{
+          placeholder={question.text}
+          onChange={(e) => onChange(question.id, e.target.value)}
+          sx={{
             padding: "8px",
             width: "100%",
-            borderRadius: "4px",
-            border: "1px solid #ccc",
+            borderRadius: "md",
+            borderColor: "neutral.outlinedBorder",
+            "&:hover": {
+              borderColor: "neutral.outlinedHoverBorder",
+            },
           }}
-          onChange={(e) => onChange(question.id, e.target.value)}
         />
-      </div>
+      </Box>
     );
   } else if (question.type === "option") {
     return (
-      <div style={{ marginBottom: "16px" }}>
-        <label style={{ display: "block", marginBottom: "8px" }}>
-          {question.text}
-        </label>
-        <div
-          style={{
-            display: "grid",
-            gap: "8px",
-            gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))",
+      <Box sx={{ width: "100%", marginBottom: "16px" }}>
+        <FormLabel
+          id={`question-${question.id}`}
+          sx={{
+            mb: 2,
+            fontWeight: "xl",
+            textTransform: "uppercase",
+            fontSize: "xs",
+            letterSpacing: "0.15rem",
           }}
         >
-          {question.options?.map((option) => (
-            <div
-              key={option}
-              onClick={() => onChange(question.id, option)}
-              style={{
-                padding: "12px",
-                textAlign: "center",
-                borderRadius: "4px",
-                border: "1px solid #ccc",
+          {question.text}
+        </FormLabel>
+        <RadioGroup
+          aria-labelledby={`question-${question.id}`}
+          size="lg"
+          sx={{ gap: 1.5 }}
+          onChange={(e) =>
+            onChange(question.id, (e.target as HTMLInputElement).value)
+          }
+        >
+          {question.options?.map((value) => (
+            <Sheet
+              key={value}
+              sx={{
+                p: 2,
+                borderRadius: "md",
+                boxShadow: "sm",
                 cursor: "pointer",
-                backgroundColor: "#f9f9f9",
+                "&:hover": {
+                  boxShadow: "md",
+                },
               }}
             >
-              {option}
-            </div>
+              <Radio
+                label={value}
+                overlay
+                disableIcon
+                value={value}
+                slotProps={{
+                  label: ({ checked }) => ({
+                    sx: {
+                      fontWeight: "lg",
+                      fontSize: "md",
+                      color: checked ? "text.primary" : "text.secondary",
+                    },
+                  }),
+                  action: ({ checked }) => ({
+                    sx: (theme) => ({
+                      ...(checked && {
+                        "--variant-borderWidth": "2px",
+                        "&&": {
+                          borderColor: theme.vars.palette.primary[500],
+                        },
+                      }),
+                    }),
+                  }),
+                }}
+              />
+            </Sheet>
           ))}
-        </div>
-      </div>
+        </RadioGroup>
+      </Box>
     );
   }
   return null;
