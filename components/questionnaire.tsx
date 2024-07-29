@@ -54,9 +54,6 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ questions }) => {
           Submit
         </Button>
       </Box>
-      <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
-        <SignInButton />
-      </Box>
     </form>
   );
 };
