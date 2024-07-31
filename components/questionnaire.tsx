@@ -17,7 +17,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ questions }) => {
   const { data: session } = useSession();
   const [answers, setAnswers] = useState<{ [key: number]: string }>({});
   const [isAnswered, setIsAnswered] = useState(false);
-  const userId = session?.user?.name ?? "0x12342452309809";
+  const userId = session?.user?.name ?? null;
 
   useEffect(() => {
     if (userId) {

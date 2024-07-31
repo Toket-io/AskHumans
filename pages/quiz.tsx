@@ -13,12 +13,7 @@ export const questions = [
     id: 2,
     text: "Where do you think the farewell match should be held?",
     type: "option",
-    options: [
-      "Monumental 🇦🇷",
-      "Cementerio de elefantes 🇦🇷",
-      "Bernabeu 🇪🇸",
-      "None",
-    ],
+    options: ["Monumental 🇦🇷", "Gigante de Arroyito 🇦🇷", "Bernabeu 🇪🇸", "None"],
   },
 ];
 
