@@ -3,6 +3,7 @@ import Question from "./Question";
 import Button from "@mui/joy/Button";
 import Box from "@mui/joy/Box";
 import SignInButton from "./SignInButton"; // Import the new SignInButton component
+import { saveQuizResults } from "../lib/firebase/firestore";
 
 interface QuestionnaireProps {
   questions: {
@@ -20,7 +21,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ questions }) => {
     setAnswers({ ...answers, [id]: answer });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Submitted Answers:", answers);
   };

@@ -1,4 +1,4 @@
-import Link from "next/link";
+import React from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import styles from "./header.module.css";
 import SignInButton from "./signInButton";
@@ -6,6 +6,8 @@ import { Box } from "@mui/joy";
 
 export default function Header() {
   const { data: session, status } = useSession();
+
+  const [isSignedIn, setIsSignedIn] = React.useState(false);
 
   const handleSignIn = () => {
     signIn("worldcoin"); // when worldcoin is the only provider
@@ -24,41 +26,37 @@ export default function Header() {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        borderBottomLeftRadius: "8px",
-        borderBottomRightRadius: "8px",
+        borderRadius: "8px",
       }}
     >
       <h1 style={{ margin: 0 }}>Ask Humans</h1>
-
-      {!session && (
-        <>
-          <SignInButton onClick={handleSignIn} />
-        </>
-      )}
-
-      {session?.user && (
-        <>
-          {session.user.image && (
-            <span
-              style={{ backgroundImage: `url('${session.user.image}')` }}
-              className={styles.avatar}
-            />
-          )}
-          <span className={styles.signedInText}>
+      {session?.user ? (
+        <div style={{}}>
+          <span>
             <small>Signed in as</small>
             <br />
-            <strong>{session.user.email ?? session.user.name}</strong>
+            <small>{session.user.email ?? session.user.name}</small>
           </span>
-          <a
-            className={styles.button}
-            onClick={(e) => {
-              e.preventDefault();
-              handleSignOut();
+
+          {/* <span style={{ marginRight: "16px" }}>Signed in as User</span> */}
+
+          <button
+            onClick={handleSignOut}
+            style={{
+              backgroundColor: "white",
+              color: "black",
+              padding: "8px 16px",
+              borderRadius: "8px",
+              border: "none",
+              cursor: "pointer",
+              fontWeight: "bold",
             }}
           >
-            Sign out
-          </a>
-        </>
+            Sign Out
+          </button>
+        </div>
+      ) : (
+        <SignInButton onClick={handleSignIn} />
       )}
     </header>
   );

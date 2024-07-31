@@ -1,12 +1,12 @@
-import { getServerSession } from "next-auth/next"
-import { authOptions } from "./api/auth/[...nextauth]"
-import Layout from "../components/layout"
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "./api/auth/[...nextauth]";
+import Layout from "../components/layout";
 
-import type { GetServerSidePropsContext } from "next"
-import { useSession } from "next-auth/react"
+import type { GetServerSidePropsContext } from "next";
+// import { useSession } from "next-auth/react";
 
 export default function ServerSidePage() {
-  const { data: session } = useSession()
+  // const { data: session } = useSession();
   // As this page uses Server Side Rendering, the `session` will be already
   // populated on render without needing to go through a loading stage.
   return (
@@ -29,16 +29,16 @@ export default function ServerSidePage() {
         The disadvantage of Server Side Rendering is that this page is slower to
         render.
       </p>
-      <pre>{JSON.stringify(session, null, 2)}</pre>
+      {/* <pre>{JSON.stringify(session, null, 2)}</pre> */}
     </Layout>
-  )
+  );
 }
 
 // Export the `session` prop to use sessions with Server Side Rendering
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  return {
-    props: {
-      session: await getServerSession(context.req, context.res, authOptions),
-    },
-  }
-}
+// export async function getServerSideProps(context: GetServerSidePropsContext) {
+//   return {
+//     props: {
+//       session: await getServerSession(context.req, context.res, authOptions),
+//     },
+//   };
+// }

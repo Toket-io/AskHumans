@@ -2,7 +2,7 @@ import Head from "next/head";
 import Questionnaire from "../components/questionnaire";
 import Layout from "../components/layout";
 
-const questions = [
+export const questions = [
   {
     id: 1,
     text: "Do you think there should be a farewell match for Angel Di María?",
@@ -31,7 +31,7 @@ export default function Home() {
       </Head>
       <main
         style={{
-          minHeight: "100vh",
+          // minHeight: "100vh",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
