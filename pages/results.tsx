@@ -3,7 +3,7 @@ import PieChart from "../components/pieChart";
 import Head from "next/head";
 import Layout from "../components/layout";
 
-import { questions } from "./quiz";
+import { questions } from ".";
 
 interface AnswersData {
   labels: string[];

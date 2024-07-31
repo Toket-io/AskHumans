@@ -17,7 +17,7 @@ import {
 } from "firebase/firestore";
 
 import { db } from "./clientApp";
-import { questions } from "../../pages/quiz";
+import { questions } from "../../pages";
 
 // export async function getQuizResultsByUserIdServer(db, userId: string) {
 //   if (!userId) {
