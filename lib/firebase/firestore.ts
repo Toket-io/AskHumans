@@ -17,6 +17,7 @@ import {
 } from "firebase/firestore";
 
 import { db } from "./clientApp";
+import { questions } from "../../pages/quiz";
 
 // export async function getQuizResultsByUserIdServer(db, userId: string) {
 //   if (!userId) {
@@ -85,14 +86,25 @@ export async function saveQuizResults(userId: string, answers: any) {
 
 export async function getQuizResults() {
   const q = query(collection(db, "answers"), orderBy("timestamp", "desc"));
+  const querySnapshot = await getDocs(q);
 
-  const results = await getDocs(q);
-  return results.docs.map((doc) => {
-    return {
-      id: doc.id,
-      ...doc.data(),
-      // Only plain objects can be passed to Client Components from Server Components
-      timestamp: doc.data().timestamp.toDate(),
-    };
+  // Initialize counters for each question's options
+  const results = {
+    1: { "Yes 👍": 0, "No 👎": 0 },
+    2: {
+      "Monumental 🇦🇷": 0,
+      "Gigante de Arroyito 🇦🇷": 0,
+      "Bernabeu 🇪🇸": 0,
+      None: 0,
+    },
+  };
+
+  // Aggregate results
+  querySnapshot.forEach((doc) => {
+    const data = doc.data();
+    results[1][data[1]]++;
+    results[2][data[2]]++;
   });
+
+  return results;
 }
