@@ -27,17 +27,25 @@ export default function Home() {
     <Layout>
       <Head>
         <title>Ask Humans</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        {/* <meta name="viewport" content="width=device-width, initial-scale=1" /> */}
       </Head>
       <main
         style={{
-          // minHeight: "100vh",
           display: "flex",
+          flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "#f0f0f0",
+          minHeight: "calc(100vh - var(--header-height))", // Adjust for the header height
+          width: "100%",
+          padding: "16px",
+          boxSizing: "border-box",
         }}
       >
+        <h1>Bienvenido a la primer encuesta de humanos verificados.</h1>
+        <h3>
+          Para entregar los resultados es necesario que hagas Sign In con World
+          ID
+        </h3>
         <Questionnaire questions={questions} />
       </main>
     </Layout>

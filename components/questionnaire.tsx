@@ -1,9 +1,8 @@
-import React, { useState } from "react";
-import Question from "./Question";
+import React, { useEffect, useState } from "react";
+import Question from "./question";
 import Button from "@mui/joy/Button";
 import Box from "@mui/joy/Box";
-import SignInButton from "./SignInButton"; // Import the new SignInButton component
-import { saveQuizResults } from "../lib/firebase/firestore";
+import { useSession } from "next-auth/react";
 
 interface QuestionnaireProps {
   questions: {
@@ -15,27 +14,63 @@ interface QuestionnaireProps {
 }
 
 const Questionnaire: React.FC<QuestionnaireProps> = ({ questions }) => {
+  const { data: session } = useSession();
   const [answers, setAnswers] = useState<{ [key: number]: string }>({});
+  const [isAnswered, setIsAnswered] = useState(false);
+  const userId = session?.user?.name ?? "0x12342452309809";
+
+  useEffect(() => {
+    if (userId) {
+      fetch(`/api/answers/${userId}`)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.answers) {
+            setAnswers(data.answers);
+            setIsAnswered(true);
+          }
+        })
+        .catch((error) => console.error("Error fetching user answers:", error));
+    }
+  }, [userId]);
 
   const handleChange = (id: number, answer: string) => {
     setAnswers({ ...answers, [id]: answer });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Submitted Answers:", answers);
+    if (!isAnswered && userId) {
+      fetch(`/api/answers/${userId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ answers, userId }),
+      })
+        .then((response) => {
+          if (response.ok) {
+            setIsAnswered(true);
+            alert("Answers submitted successfully!");
+          } else {
+            alert("Failed to submit answers.");
+          }
+        })
+        .catch((error) => console.error("Error submitting answers:", error));
+    }
   };
 
   return (
     <form
       onSubmit={handleSubmit}
-      style={{ padding: "16px", maxWidth: "600px", margin: "0 auto" }}
+      style={{ padding: "16px", maxWidth: "600px", margin: "0" }}
     >
       {questions.map((question) => (
         <Question
           key={question.id}
           question={question}
           onChange={handleChange}
+          disabled={isAnswered}
+          value={answers[question.id] || ""}
         />
       ))}
       <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
@@ -43,14 +78,15 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ questions }) => {
           type="submit"
           sx={{
             width: "100%",
-            backgroundColor: "primary.main",
+            backgroundColor: isAnswered ? "grey" : "primary.main",
             color: "white",
             padding: "10px",
             borderRadius: "md",
             "&:hover": {
-              backgroundColor: "primary.dark",
+              backgroundColor: isAnswered ? "grey" : "primary.dark",
             },
           }}
+          disabled={isAnswered || !userId}
         >
           Submit
         </Button>

@@ -6,7 +6,10 @@ import { authOptions } from "../auth/[...nextauth]";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getFirestore } from "firebase/firestore";
 // import { getAuthenticatedAppForUser } from "../../../lib/firebase/serverApp";
-import { getQuizResultsByUserId } from "../../../lib/firebase/firestore";
+import {
+  getQuizResultsByUserId,
+  saveQuizResults,
+} from "../../../lib/firebase/firestore";
 
 export default async function handler(
   req: NextApiRequest,
@@ -43,16 +46,22 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
   });
 }
 
-function handlePost(req: NextApiRequest, res: NextApiResponse) {
-  const { userId, data } = req.body;
+async function handlePost(req: NextApiRequest, res: NextApiResponse) {
+  const { userId, answers } = req.body;
 
-  if (!userId || !data) {
+  console.log("*AC body", req.body);
+  console.log("*AC userId", userId);
+
+  // TODO: Check protected routes
+
+  if (!userId || !answers) {
     res.status(400).json({ error: "User ID and data are required" });
     return;
   }
 
+  const saveResult = await saveQuizResults(userId, answers);
+  console.log("*AC saveResult: ", saveResult);
+
   // Process the userId and data for POST request
-  res
-    .status(200)
-    .json({ message: `Data received for user ID ${userId}`, data });
+  res.status(200).json({ message: `Data received for user ID ${userId}` });
 }

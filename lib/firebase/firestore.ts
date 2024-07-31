@@ -1,5 +1,3 @@
-import { generateFakeRestaurantsAndReviews } from "@/src/lib/fakeRestaurants.js";
-
 import {
   collection,
   onSnapshot,
@@ -13,6 +11,7 @@ import {
   runTransaction,
   where,
   addDoc,
+  setDoc,
   getFirestore,
   limit,
 } from "firebase/firestore";
@@ -73,9 +72,9 @@ export async function saveQuizResults(userId: string, answers: any) {
   const userAnswersRef = doc(collection(db, "answers"), userId);
 
   try {
-    await updateDoc(userAnswersRef, {
+    await setDoc(userAnswersRef, {
       userId,
-      answers,
+      ...answers,
       timestamp: Timestamp.now(),
     });
     console.log("Document successfully written!");

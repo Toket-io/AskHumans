@@ -1,3 +1,4 @@
+// components/Question.tsx
 import React from "react";
 import Box from "@mui/joy/Box";
 import FormLabel from "@mui/joy/FormLabel";
@@ -14,9 +15,16 @@ interface QuestionProps {
     options?: string[];
   };
   onChange: (id: number, answer: string) => void;
+  disabled: boolean;
+  value: string;
 }
 
-const Question: React.FC<QuestionProps> = ({ question, onChange }) => {
+const Question: React.FC<QuestionProps> = ({
+  question,
+  onChange,
+  disabled,
+  value,
+}) => {
   if (question.type === "text") {
     return (
       <Box sx={{ width: "100%", marginBottom: "16px" }}>
@@ -34,6 +42,7 @@ const Question: React.FC<QuestionProps> = ({ question, onChange }) => {
         </FormLabel>
         <Input
           type="text"
+          value={value}
           placeholder={question.text}
           onChange={(e) => onChange(question.id, e.target.value)}
           sx={{
@@ -45,6 +54,7 @@ const Question: React.FC<QuestionProps> = ({ question, onChange }) => {
               borderColor: "neutral.outlinedHoverBorder",
             },
           }}
+          disabled={disabled}
         />
       </Box>
     );
@@ -66,14 +76,15 @@ const Question: React.FC<QuestionProps> = ({ question, onChange }) => {
         <RadioGroup
           aria-labelledby={`question-${question.id}`}
           size="lg"
+          value={value}
           sx={{ gap: 1.5 }}
           onChange={(e) =>
             onChange(question.id, (e.target as HTMLInputElement).value)
           }
         >
-          {question.options?.map((value) => (
+          {question.options?.map((option) => (
             <Sheet
-              key={value}
+              key={option}
               sx={{
                 p: 2,
                 borderRadius: "md",
@@ -85,10 +96,10 @@ const Question: React.FC<QuestionProps> = ({ question, onChange }) => {
               }}
             >
               <Radio
-                label={value}
+                label={option}
                 overlay
                 disableIcon
-                value={value}
+                value={option}
                 slotProps={{
                   label: ({ checked }) => ({
                     sx: {
@@ -108,6 +119,7 @@ const Question: React.FC<QuestionProps> = ({ question, onChange }) => {
                     }),
                   }),
                 }}
+                disabled={disabled}
               />
             </Sheet>
           ))}

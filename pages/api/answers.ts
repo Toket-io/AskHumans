@@ -8,7 +8,6 @@ export default async function handler(
   const results = await getQuizResults();
 
   return res.send({
-    results,
-    answers: [1, 3, 55, 13],
+    answers: results,
   });
 }

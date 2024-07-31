@@ -12,7 +12,7 @@ interface AnswersData {
 }
 
 const Results: React.FC = () => {
-  const [data, setData] = useState<AnswersData | null>(null);
+  const [data, setData] = useState<number[] | null>(null);
 
   useEffect(() => {
     fetch("/api/answers")
