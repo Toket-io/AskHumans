@@ -1,4 +1,3 @@
-// pages/results.tsx
 import React, { useEffect, useState } from "react";
 import PieChart from "../components/pieChart";
 import Head from "next/head";
@@ -7,12 +6,12 @@ import Layout from "../components/layout";
 import { questions } from "./quiz";
 
 interface AnswersData {
-  yes: number;
-  no: number;
+  labels: string[];
+  data: number[];
 }
 
 const Results: React.FC = () => {
-  const [data, setData] = useState<number[] | null>(null);
+  const [data, setData] = useState<{ [key: number]: AnswersData } | null>(null);
 
   useEffect(() => {
     fetch("/api/answers")
@@ -31,21 +30,21 @@ const Results: React.FC = () => {
         <title>Quiz Results</title>
       </Head>
       <main
-      // style={{
-      //   // minHeight: "100vh",
-      //   display: "flex",
-      //   alignItems: "center",
-      //   justifyContent: "center",
-      //   backgroundColor: "#f0f0f0",
-      // }}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "16px",
+        }}
       >
         <h1>Quiz Results</h1>
 
-        {questions.map((question, index) => (
+        {questions.map((question) => (
           <PieChart
             key={question.id}
-            labels={question.options}
-            data={data}
+            labels={data[question.id].labels}
+            data={data[question.id].data}
             title={question.text}
             chartId={question.id.toString()}
           />

@@ -106,5 +106,17 @@ export async function getQuizResults() {
     results[2][data[2]]++;
   });
 
-  return results;
+  // Format results as required
+  const formattedResults = {
+    1: {
+      labels: Object.keys(results[1]),
+      data: Object.values(results[1]),
+    },
+    2: {
+      labels: Object.keys(results[2]),
+      data: Object.values(results[2]),
+    },
+  };
+
+  return formattedResults;
 }
