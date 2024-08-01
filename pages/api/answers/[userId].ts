@@ -7,6 +7,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { getFirestore } from "firebase/firestore";
 // import { getAuthenticatedAppForUser } from "../../../lib/firebase/serverApp";
 import {
+  countQuizResults,
   getQuizResultsByUserId,
   saveQuizResults,
 } from "../../../lib/firebase/firestore";
@@ -36,6 +37,7 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
   const userId: string = req.query.userId as string;
 
   const answers = await getQuizResultsByUserId(userId);
+  const totalCount = await countQuizResults();
 
   console.log("*AC answers", answers);
 
@@ -43,6 +45,7 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
 
   res.send({
     answers,
+    count: totalCount,
   });
 }
 

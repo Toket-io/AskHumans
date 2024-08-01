@@ -23,6 +23,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ questions }) => {
   const { data: session } = useSession();
   const [answers, setAnswers] = useState<{ [key: number]: string }>({});
   const [isAnswered, setIsAnswered] = useState(false);
+  const [responseCount, setResponseCount] = useState<number | null>(null);
   const userId = session?.user?.name ?? null;
 
   useEffect(() => {
@@ -32,6 +33,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ questions }) => {
         .then((data) => {
           if (data.answers) {
             setAnswers(data.answers);
+            setResponseCount(data.count);
             setIsAnswered(true);
           }
         })
@@ -85,7 +87,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ questions }) => {
       {/* Show the SignInDisclosureBanner if the user is unauthenticated */}
       {!userId && <SignInDisclosureBanner />}
       {/* Show the SuccessBanner if the quiz is already answered */}
-      {isAnswered && <SuccessBanner />}
+      {isAnswered && <SuccessBanner totalResponses={responseCount} />}
 
       {questions.map((question) => (
         <FormControl key={question.id}>

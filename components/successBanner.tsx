@@ -3,7 +3,11 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import Link from "next/link";
 import Box from "@mui/joy/Box";
 
-const SuccessBanner: React.FC = () => {
+interface SuccessBannerProps {
+  totalResponses: number | null;
+}
+
+const SuccessBanner: React.FC<SuccessBannerProps> = ({ totalResponses }) => {
   return (
     <Box
       sx={{
@@ -21,6 +25,12 @@ const SuccessBanner: React.FC = () => {
         <p style={{ margin: 0, fontWeight: "bold" }}>
           ¡Gracias por responder este cuestionario!
         </p>
+        {totalResponses && (
+          <p style={{ margin: 0 }}>
+            Eres uno de los {totalResponses} humanos que han respondido el
+            cuestionario.
+          </p>
+        )}
         <p style={{ margin: 0 }}>
           Puedes encontrar los resultados <Link href="/results">aquí</Link>.
         </p>

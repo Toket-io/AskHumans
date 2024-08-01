@@ -14,6 +14,8 @@ import {
   setDoc,
   getFirestore,
   limit,
+  count,
+  getCountFromServer,
 } from "firebase/firestore";
 
 import { db } from "./clientApp";
@@ -117,4 +119,13 @@ export async function getQuizResults() {
   });
 
   return formattedResults;
+}
+
+export async function countQuizResults() {
+  const q = query(collection(db, "answers"));
+  const snapshot = await getCountFromServer(q);
+
+  // Format the count with thousands separator
+  const formattedCount = snapshot.data().count.toLocaleString("es-AR");
+  return formattedCount;
 }
