@@ -7,7 +7,7 @@ export const questions = [
     id: 1,
     text: "¿Crees que debería haber un partido de despedida para Ángel Di María?",
     type: "option",
-    options: ["Sí 👍", "No 👎"],
+    options: ["Si 👍", "No 👎"],
   },
   {
     id: 2,

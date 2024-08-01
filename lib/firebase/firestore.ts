@@ -89,34 +89,32 @@ export async function getQuizResults() {
   const querySnapshot = await getDocs(q);
 
   // Initialize counters for each question's options
-  const results = {
-    1: { "Yes 👍": 0, "No 👎": 0 },
-    2: {
-      "Monumental 🇦🇷": 0,
-      "Gigante de Arroyito 🇦🇷": 0,
-      "Bernabeu 🇪🇸": 0,
-      None: 0,
-    },
-  };
+  const results = {};
+  questions.forEach((question) => {
+    results[question.id] = {};
+    question.options.forEach((option) => {
+      results[question.id][option] = 0;
+    });
+  });
 
   // Aggregate results
   querySnapshot.forEach((doc) => {
     const data = doc.data();
-    results[1][data[1]]++;
-    results[2][data[2]]++;
+    Object.keys(data).forEach((key) => {
+      if (key !== "userId" && key !== "timestamp") {
+        results[key][data[key]]++;
+      }
+    });
   });
 
   // Format results as required
-  const formattedResults = {
-    1: {
-      labels: Object.keys(results[1]),
-      data: Object.values(results[1]),
-    },
-    2: {
-      labels: Object.keys(results[2]),
-      data: Object.values(results[2]),
-    },
-  };
+  const formattedResults = {};
+  Object.keys(results).forEach((key) => {
+    formattedResults[key] = {
+      labels: Object.keys(results[key]),
+      data: Object.values(results[key]),
+    };
+  });
 
   return formattedResults;
 }
