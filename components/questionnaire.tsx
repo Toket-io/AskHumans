@@ -9,6 +9,7 @@ import SignInDisclosureBanner from "./signInDisclousureBanner";
 import FormControl from "@mui/joy/FormControl";
 import FormLabel from "@mui/joy/FormLabel";
 import FormHelperText from "@mui/joy/FormHelperText";
+import { CircularProgress } from "@mui/joy";
 
 interface QuestionnaireProps {
   questions: {
@@ -22,12 +23,15 @@ interface QuestionnaireProps {
 const Questionnaire: React.FC<QuestionnaireProps> = ({ questions }) => {
   const { data: session } = useSession();
   const [answers, setAnswers] = useState<{ [key: number]: string }>({});
+  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [isAnswered, setIsAnswered] = useState(false);
   const [responseCount, setResponseCount] = useState<number | null>(null);
   const userId = session?.user?.name ?? null;
 
   useEffect(() => {
     if (userId) {
+      setLoading(true);
       fetch(`/api/answers/${userId}`)
         .then((response) => response.json())
         .then((data) => {
@@ -37,7 +41,8 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ questions }) => {
             setIsAnswered(true);
           }
         })
-        .catch((error) => console.error("Error fetching user answers:", error));
+        .catch((error) => console.error("Error fetching user answers:", error))
+        .finally(() => setLoading(false));
     }
   }, [userId]);
 
@@ -48,6 +53,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ questions }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!isAnswered && userId) {
+      setSubmitting(true);
       fetch(`/api/answers/${userId}`, {
         method: "POST",
         headers: {
@@ -63,9 +69,25 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ questions }) => {
             alert("Error al enviar las respuestas.");
           }
         })
-        .catch((error) => console.error("Error submitting answers:", error));
+        .catch((error) => console.error("Error submitting answers:", error))
+        .finally(() => setSubmitting(false));
     }
   };
+
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <Box
@@ -115,6 +137,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ questions }) => {
             },
           }}
           disabled={isAnswered || !userId}
+          loading={submitting}
         >
           Enviar
         </Button>
