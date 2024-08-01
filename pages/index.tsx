@@ -5,15 +5,20 @@ import Layout from "../components/layout";
 export const questions = [
   {
     id: 1,
-    text: "Do you think there should be a farewell match for Angel Di María?",
+    text: "¿Crees que debería haber un partido de despedida para Ángel Di María?",
     type: "option",
-    options: ["Yes 👍", "No 👎"],
+    options: ["Sí 👍", "No 👎"],
   },
   {
     id: 2,
-    text: "Where do you think the farewell match should be held?",
+    text: "¿Dónde crees que debería celebrarse el partido de despedida?",
     type: "option",
-    options: ["Monumental 🇦🇷", "Gigante de Arroyito 🇦🇷", "Bernabeu 🇪🇸", "None"],
+    options: [
+      "Monumental 🇦🇷",
+      "Gigante de Arroyito 🇦🇷",
+      "Bernabeu 🇪🇸",
+      "Ninguno",
+    ],
   },
 ];
 
@@ -36,11 +41,6 @@ export default function Home() {
           boxSizing: "border-box",
         }}
       >
-        <h1>Bienvenido a la primer encuesta de humanos verificados.</h1>
-        <h3>
-          Para entregar los resultados es necesario que hagas Sign In con World
-          ID
-        </h3>
         <Questionnaire questions={questions} />
       </main>
     </Layout>

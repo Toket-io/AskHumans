@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Question from "./question";
+import Typography from "@mui/joy/Typography";
 import Button from "@mui/joy/Button";
 import Box from "@mui/joy/Box";
 import { useSession } from "next-auth/react";
+import SuccessBanner from "./successBanner";
+import SignInDisclosureBanner from "./signInDisclousureBanner";
 
 interface QuestionnaireProps {
   questions: {
@@ -62,8 +65,21 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ questions }) => {
   return (
     <form
       onSubmit={handleSubmit}
-      style={{ padding: "16px", maxWidth: "600px", margin: "0" }}
+      style={{
+        padding: "16px",
+        maxWidth: "600px",
+        margin: "0 auto",
+      }}
     >
+      <Typography level="h3">
+        Bienvenido a la primer encuesta de humanos verificados.
+      </Typography>
+
+      {/* Show the SignInDisclosureBanner if the quiz is user is unauthenticated */}
+      {!userId && <SignInDisclosureBanner />}
+      {/* Show the SuccessBanner if the quiz is already answered */}
+      {isAnswered && <SuccessBanner />}
+
       {questions.map((question) => (
         <Question
           key={question.id}
