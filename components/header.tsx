@@ -2,10 +2,15 @@ import React from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import styles from "./header.module.css";
 import SignInButton from "./signInButton";
-import { Box } from "@mui/joy";
+import { Box, Button, Typography } from "@mui/joy";
 
 export default function Header() {
   const { data: session, status } = useSession();
+
+  // Truncate user id to first 4 and last 4 characters
+  const userId = session?.user?.name
+    ? `${session.user.name.slice(0, 5)}...${session.user.name.slice(-5)}`
+    : null;
 
   const [isSignedIn, setIsSignedIn] = React.useState(false);
 
@@ -31,30 +36,18 @@ export default function Header() {
     >
       <h1 style={{ margin: 0 }}>Ask Humans</h1>
       {session?.user ? (
-        <div style={{}}>
-          <span>
-            <small>Signed in as</small>
-            <br />
-            <small>{session.user.email ?? session.user.name}</small>
-          </span>
-
-          {/* <span style={{ marginRight: "16px" }}>Signed in as User</span> */}
-
-          <button
-            onClick={handleSignOut}
-            style={{
-              backgroundColor: "white",
-              color: "black",
-              padding: "8px 16px",
-              borderRadius: "8px",
-              border: "none",
-              cursor: "pointer",
-              fontWeight: "bold",
-            }}
-          >
+        <Box
+          sx={{
+            textAlign: "right",
+          }}
+        >
+          <Typography mb={1} sx={{ color: "white" }} level="body-md">
+            Signed in as {userId}
+          </Typography>
+          <Button size="sm" color="neutral" onClick={handleSignOut}>
             Sign Out
-          </button>
-        </div>
+          </Button>
+        </Box>
       ) : (
         <SignInButton onClick={handleSignIn} />
       )}
