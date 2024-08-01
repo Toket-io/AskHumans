@@ -37,7 +37,6 @@ export default function Home() {
           justifyContent: "center",
           minHeight: "calc(100vh - var(--header-height))", // Adjust for the header height
           width: "100%",
-          padding: "16px",
           boxSizing: "border-box",
         }}
       >

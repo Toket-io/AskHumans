@@ -6,6 +6,9 @@ import Box from "@mui/joy/Box";
 import { useSession } from "next-auth/react";
 import SuccessBanner from "./successBanner";
 import SignInDisclosureBanner from "./signInDisclousureBanner";
+import FormControl from "@mui/joy/FormControl";
+import FormLabel from "@mui/joy/FormLabel";
+import FormHelperText from "@mui/joy/FormHelperText";
 
 interface QuestionnaireProps {
   questions: {
@@ -53,9 +56,9 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ questions }) => {
         .then((response) => {
           if (response.ok) {
             setIsAnswered(true);
-            alert("Answers submitted successfully!");
+            alert("¡Respuestas enviadas con éxito!");
           } else {
-            alert("Failed to submit answers.");
+            alert("Error al enviar las respuestas.");
           }
         })
         .catch((error) => console.error("Error submitting answers:", error));
@@ -63,33 +66,40 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ questions }) => {
   };
 
   return (
-    <form
+    <Box
+      component="form"
       onSubmit={handleSubmit}
-      style={{
+      sx={{
         padding: "16px",
         maxWidth: "600px",
         margin: "0 auto",
+        display: "flex",
+        flexDirection: "column",
+        // gap: "12px",
       }}
     >
-      <Typography level="h3">
+      <Typography level="h3" mb={3}>
         Bienvenido a la primer encuesta de humanos verificados.
       </Typography>
 
-      {/* Show the SignInDisclosureBanner if the quiz is user is unauthenticated */}
+      {/* Show the SignInDisclosureBanner if the user is unauthenticated */}
       {!userId && <SignInDisclosureBanner />}
       {/* Show the SuccessBanner if the quiz is already answered */}
       {isAnswered && <SuccessBanner />}
 
       {questions.map((question) => (
-        <Question
-          key={question.id}
-          question={question}
-          onChange={handleChange}
-          disabled={isAnswered}
-          value={answers[question.id] || ""}
-        />
+        <FormControl key={question.id}>
+          <Question
+            question={question}
+            onChange={handleChange}
+            disabled={isAnswered}
+            value={answers[question.id] || ""}
+          />
+          <FormHelperText></FormHelperText>
+        </FormControl>
       ))}
-      <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
+
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
         <Button
           type="submit"
           sx={{
@@ -104,10 +114,10 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ questions }) => {
           }}
           disabled={isAnswered || !userId}
         >
-          Submit
+          Enviar
         </Button>
       </Box>
-    </form>
+    </Box>
   );
 };
 

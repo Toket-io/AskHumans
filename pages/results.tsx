@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import PieChart from "../components/pieChart";
 import Head from "next/head";
 import Layout from "../components/layout";
+import CircularProgress from "@mui/joy/CircularProgress";
+import Box from "@mui/joy/Box";
 
-import { questions } from ".";
+import { questions } from "."; // Adjust the import based on your project structure
 
 interface AnswersData {
   labels: string[];
@@ -21,13 +23,24 @@ const Results: React.FC = () => {
   }, []);
 
   if (!data) {
-    return <div>Loading...</div>;
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
 
   return (
     <Layout>
       <Head>
-        <title>Quiz Results</title>
+        <title>Resultados</title>
       </Head>
       <main
         style={{
@@ -38,7 +51,7 @@ const Results: React.FC = () => {
           padding: "16px",
         }}
       >
-        <h1>Quiz Results</h1>
+        <h1>Resultados de la Encuesta</h1>
 
         {questions.map((question) => (
           <PieChart

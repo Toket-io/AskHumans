@@ -27,7 +27,12 @@ const Question: React.FC<QuestionProps> = ({
 }) => {
   if (question.type === "text") {
     return (
-      <Box sx={{ width: "100%", marginBottom: "16px" }}>
+      <Box
+        sx={{
+          width: "100%",
+          marginBottom: "16px",
+        }}
+      >
         <FormLabel
           id={`question-${question.id}`}
           sx={{
@@ -60,7 +65,14 @@ const Question: React.FC<QuestionProps> = ({
     );
   } else if (question.type === "option") {
     return (
-      <Box sx={{ width: "100%", marginBottom: "16px" }}>
+      <Box
+        mt={3}
+        sx={{
+          // backgroundColor: "red",
+          width: "100%",
+          marginBottom: "16px",
+        }}
+      >
         <FormLabel
           id={`question-${question.id}`}
           sx={{

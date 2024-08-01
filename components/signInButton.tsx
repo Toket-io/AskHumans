@@ -35,7 +35,7 @@ const SignInButton: React.FC<SignInButtonProps> = ({ onClick }) => {
         },
       }}
     >
-      Sign In with World ID
+      Sign In con World ID
     </Button>
   );
 };
