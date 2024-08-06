@@ -131,7 +131,12 @@ export async function countQuizResults() {
   return formattedCount;
 }
 
+// <<<<<<<<--------- NEW VERSION --------->>>>>>>>>
 export async function createNewPoll(newPoll: NewPoll): Promise<Poll> {
+  if (!newPoll) {
+    throw new Error("Error: Invalid request data received");
+  }
+
   const pollRef = doc(collection(db, "polls"));
 
   try {
@@ -156,6 +161,10 @@ export async function createNewPoll(newPoll: NewPoll): Promise<Poll> {
 }
 
 export async function getPollById(pollId: string) {
+  if (!pollId) {
+    throw new Error("Error: Invalid request data received");
+  }
+
   const pollRef = doc(db, "polls", pollId);
   const pollSnap = await getDoc(pollRef);
 
@@ -175,8 +184,8 @@ export async function savePollResults(
   userId: string,
   answers: Answer[]
 ): Promise<PollResult> {
-  if (!userId) {
-    throw new Error("Error: Invalid userId received: " + userId);
+  if (!pollId || !userId || !answers) {
+    throw new Error("Error: Invalid request data received");
   }
 
   const userAnswersRef = doc(
@@ -203,8 +212,8 @@ export async function savePollResults(
 }
 
 export async function getPollResultsByUserId(pollId: string, userId: string) {
-  if (!userId) {
-    throw new Error("Error: Invalid userId received: " + userId);
+  if (!pollId || !userId) {
+    throw new Error("Error: Invalid request data received");
   }
 
   const userAnswersRef = doc(
