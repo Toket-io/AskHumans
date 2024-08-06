@@ -20,6 +20,7 @@ import {
 
 import { db } from "./clientApp";
 import { questions } from "../../pages";
+import { Poll, Answer, PollResult, NewPoll } from "../types"; // Adjust the import based on your chosen structure
 
 // export async function getQuizResultsByUserIdServer(db, userId: string) {
 //   if (!userId) {
@@ -129,3 +130,42 @@ export async function countQuizResults() {
   const formattedCount = snapshot.data().count.toLocaleString("es-AR");
   return formattedCount;
 }
+
+export async function createNewPoll(newPoll: NewPoll): Promise<Poll> {
+  const pollRef = doc(collection(db, "polls"));
+
+  try {
+    // Save new poll
+    const timestamp = new Date();
+
+    await setDoc(pollRef, {
+      ...newPoll,
+      timestamp: timestamp,
+    });
+
+    const poll: Poll = {
+      id: pollRef.id,
+      ...newPoll,
+      timestamp: timestamp,
+    };
+
+    return poll;
+  } catch (e) {
+    throw new Error("Error writing document: " + e);
+  }
+}
+
+export async function getPollById(pollId: string) {
+  const pollRef = doc(db, "polls", pollId);
+  const pollSnap = await getDoc(pollRef);
+
+  if (!pollSnap.exists()) {
+    throw new Error("No such document!");
+  }
+
+  return {
+    id: pollSnap.id,
+    ...pollSnap.data(),
+  };
+}
+
