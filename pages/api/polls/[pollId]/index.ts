@@ -1,7 +1,7 @@
 // This is an example of to protect an API route
 
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "../auth/[...nextauth]";
+import { authOptions } from "../../auth/[...nextauth]";
 
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getFirestore } from "firebase/firestore";
@@ -11,7 +11,7 @@ import {
   getPollById,
   getQuizResultsByUserId,
   saveQuizResults,
-} from "../../../lib/firebase/firestore";
+} from "../../../../lib/firebase/firestore";
 
 export default async function handler(
   req: NextApiRequest,

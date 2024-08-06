@@ -166,6 +166,63 @@ export async function getPollById(pollId: string) {
   return {
     id: pollSnap.id,
     ...pollSnap.data(),
+    timestamp: pollSnap.data().timestamp.toDate(),
   };
 }
 
+export async function savePollResults(
+  pollId: string,
+  userId: string,
+  answers: Answer[]
+): Promise<PollResult> {
+  if (!userId) {
+    throw new Error("Error: Invalid userId received: " + userId);
+  }
+
+  const userAnswersRef = doc(
+    collection(db, "polls"),
+    pollId,
+    "answers",
+    userId
+  );
+
+  const pollResult: PollResult = {
+    userId,
+    pollId,
+    answers,
+    timestamp: new Date(),
+  };
+
+  try {
+    await setDoc(userAnswersRef, pollResult);
+
+    return pollResult;
+  } catch (e) {
+    throw new Error("Error writing document: " + e);
+  }
+}
+
+export async function getPollResultsByUserId(pollId: string, userId: string) {
+  if (!userId) {
+    throw new Error("Error: Invalid userId received: " + userId);
+  }
+
+  const userAnswersRef = doc(
+    collection(db, "polls"),
+    pollId,
+    "answers",
+    userId
+  );
+  const userAnswersSnap = await getDoc(userAnswersRef);
+
+  if (!userAnswersSnap.exists()) {
+    throw new Error("No such document!");
+  }
+
+  return {
+    ...userAnswersSnap.data(),
+    timestamp: userAnswersSnap.data().timestamp.toDate(),
+  };
+}
+
+// TODO: Check all throw errors and validation
