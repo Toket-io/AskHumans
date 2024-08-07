@@ -1,6 +1,7 @@
 import React from "react";
 import Button from "@mui/joy/Button";
 import Image from "next/image";
+import { track } from "@vercel/analytics";
 
 interface SignInButtonProps {
   onClick: () => void;
@@ -21,6 +22,7 @@ const SignInButton: React.FC<SignInButtonProps> = ({ onClick }) => {
       }
       onClick={(e) => {
         e.preventDefault();
+        track("worldcoin_sign_in");
         onClick();
       }}
       sx={{
