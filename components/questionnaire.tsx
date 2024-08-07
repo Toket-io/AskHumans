@@ -105,12 +105,10 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ questions }) => {
       <Typography level="h3" mb={3}>
         Bienvenido a la primer encuesta de humanos verificados.
       </Typography>
-
       {/* Show the SignInDisclosureBanner if the user is unauthenticated */}
       {!userId && <SignInDisclosureBanner />}
       {/* Show the SuccessBanner if the quiz is already answered */}
       {isAnswered && <SuccessBanner totalResponses={responseCount} />}
-
       {questions.map((question) => (
         <FormControl key={question.id}>
           <Question
@@ -122,7 +120,6 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ questions }) => {
           <FormHelperText></FormHelperText>
         </FormControl>
       ))}
-
       <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
         <Button
           type="submit"
@@ -142,6 +139,10 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ questions }) => {
           Enviar
         </Button>
       </Box>
+
+      <Typography level="body-sm" mt={3} textAlign={"center"}>
+        Developed by <a href="https://blockchainrd.xyz">Blockchain R&D</a>
+      </Typography>
     </Box>
   );
 };

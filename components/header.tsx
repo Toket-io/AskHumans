@@ -31,7 +31,8 @@ export default function Header() {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        borderRadius: "8px",
+        borderBottomLeftRadius: "8px",
+        borderBottomRightRadius: "8px",
       }}
     >
       <h1 style={{ margin: 0 }}>Ask Humans</h1>
