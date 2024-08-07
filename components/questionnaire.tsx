@@ -10,6 +10,7 @@ import FormControl from "@mui/joy/FormControl";
 import FormLabel from "@mui/joy/FormLabel";
 import FormHelperText from "@mui/joy/FormHelperText";
 import { CircularProgress } from "@mui/joy";
+import { track } from "@vercel/analytics";
 
 interface QuestionnaireProps {
   questions: {
@@ -141,7 +142,16 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ questions }) => {
       </Box>
 
       <Typography level="body-sm" mt={3} textAlign={"center"}>
-        Developed by <a href="https://blockchainrd.xyz">Blockchain R&D</a>
+        Developed by{" "}
+        <a
+          href="https://blockchainrd.xyz"
+          style={{ color: "gray" }}
+          onClick={(e) => {
+            track("blockchainrd_link_click");
+          }}
+        >
+          Blockchain R&D
+        </a>
       </Typography>
     </Box>
   );
