@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Head from "next/head";
 import Layout from "../../components/layout";
 import { NewPoll, Question } from "../../lib/types";
+import { Box, Button, Container, Input, Typography } from "@mui/joy";
 
 export default function NewPollPage() {
   const [pollTitle, setPollTitle] = useState("");
@@ -45,6 +46,17 @@ export default function NewPollPage() {
     updateQuestion(qIndex, updatedQuestion);
   };
 
+  const deleteOption = (qIndex: number, oIndex: number) => {
+    const updatedQuestion = { ...questions[qIndex] };
+    updatedQuestion.options.splice(oIndex, 1);
+    updateQuestion(qIndex, updatedQuestion);
+  };
+
+  const deleteQuestion = (qIndex: number) => {
+    const newQuestions = questions.filter((_, i) => i !== qIndex);
+    setQuestions(newQuestions);
+  };
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     const newPoll: NewPoll = { title: pollTitle, questions };
@@ -57,73 +69,115 @@ export default function NewPollPage() {
       <Head>
         <title>New Poll</title>
       </Head>
-      <main
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          minHeight: "calc(100vh - var(--header-height))", // Adjust for the header height
-          width: "100%",
-          boxSizing: "border-box",
-        }}
-      >
-        <h1>Create a New Poll</h1>
-        <form
-          onSubmit={handleSubmit}
-          style={{ width: "100%", maxWidth: "600px" }}
+      <Container>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            minHeight: "calc(100vh - var(--header-height))", // Adjust for the header height
+            width: "100%",
+            boxSizing: "border-box",
+          }}
         >
-          <div>
-            <label htmlFor="pollTitle">Poll Title</label>
-            <input
-              type="text"
-              id="pollTitle"
-              value={pollTitle}
-              onChange={(e) => setPollTitle(e.target.value)}
-              required
-            />
-          </div>
-          {questions.map((question, qIndex) => (
-            <div key={qIndex}>
-              <h3>Question {qIndex + 1}</h3>
-              <label htmlFor={`question-${qIndex}`}>Question Text</label>
-              <input
+          <Typography level="h1">Create a New Poll</Typography>
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            sx={{ width: "100%", maxWidth: "600px", mt: 2 }}
+          >
+            <Box>
+              <Typography level="h2">Poll Title</Typography>
+              <Input
                 type="text"
-                id={`question-${qIndex}`}
-                value={question.text}
-                onChange={(e) => {
-                  const updatedQuestion = { ...question, text: e.target.value };
-                  updateQuestion(qIndex, updatedQuestion);
-                }}
+                value={pollTitle}
+                onChange={(e) => setPollTitle(e.target.value)}
                 required
+                fullWidth
+                sx={{ mb: 2 }}
               />
-              {question.options.map((option, oIndex) => (
-                <div key={oIndex}>
-                  <label htmlFor={`option-${qIndex}-${oIndex}`}>
-                    Option {oIndex + 1}
-                  </label>
-                  <input
-                    type="text"
-                    id={`option-${qIndex}-${oIndex}`}
-                    value={option}
-                    onChange={(e) =>
-                      handleOptionChange(qIndex, oIndex, e.target.value)
-                    }
-                    required
-                  />
-                </div>
-              ))}
-              <button type="button" onClick={() => addOption(qIndex)}>
-                Add Option
-              </button>
-            </div>
-          ))}
-          <button type="button" onClick={addQuestion}>
-            Add Question
-          </button>
-          <button type="submit">Save Poll</button>
-        </form>
-      </main>
+            </Box>
+            {questions.map((question, qIndex) => (
+              <Box
+                key={qIndex}
+                sx={{
+                  border: "1px solid #ccc",
+                  padding: "10px",
+                  marginBottom: "10px",
+                  borderRadius: 2,
+                }}
+              >
+                <Typography level="h3">Question {qIndex + 1}</Typography>
+                <Input
+                  type="text"
+                  value={question.text}
+                  onChange={(e) => {
+                    const updatedQuestion = {
+                      ...question,
+                      text: e.target.value,
+                    };
+                    updateQuestion(qIndex, updatedQuestion);
+                  }}
+                  required
+                  fullWidth
+                  sx={{ mb: 2 }}
+                />
+                {question.options.map((option, oIndex) => (
+                  <Box
+                    key={oIndex}
+                    sx={{ display: "flex", alignItems: "center", mb: 1 }}
+                  >
+                    <Input
+                      type="text"
+                      value={option}
+                      onChange={(e) =>
+                        handleOptionChange(qIndex, oIndex, e.target.value)
+                      }
+                      required
+                      sx={{ flexGrow: 1, mr: 1 }}
+                    />
+                    <Button
+                      variant="outlined"
+                      color="danger"
+                      onClick={() => deleteOption(qIndex, oIndex)}
+                    >
+                      Delete Option
+                    </Button>
+                  </Box>
+                ))}
+                <Button
+                  variant="soft"
+                  color="neutral"
+                  onClick={() => addOption(qIndex)}
+                  sx={{ mt: 1 }}
+                >
+                  Add Option
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="danger"
+                  onClick={() => deleteQuestion(qIndex)}
+                  sx={{ mt: 1, ml: 1 }}
+                >
+                  Delete Question
+                </Button>
+              </Box>
+            ))}
+            <Button
+              variant="soft"
+              color="neutral"
+              onClick={addQuestion}
+              sx={{ mb: 2 }}
+            >
+              Add Question
+            </Button>
+            <Button type="submit" variant="solid" color="primary">
+              Save Poll
+            </Button>
+          </Box>
+        </Box>
+      </Container>
     </Layout>
   );
 }
