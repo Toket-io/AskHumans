@@ -25,52 +25,54 @@ const Question: React.FC<QuestionProps> = ({
   disabled,
   value,
 }) => {
-  if (question.type === "text") {
-    return (
-      <Box
-        sx={{
-          width: "100%",
-          marginBottom: "16px",
-        }}
-      >
-        <FormLabel
-          id={`question-${question.id}`}
-          sx={{
-            mb: 2,
-            fontWeight: "xl",
-            textTransform: "uppercase",
-            fontSize: "xs",
-            letterSpacing: "0.15rem",
-          }}
-        >
-          {question.text}
-        </FormLabel>
-        <Input
-          type="text"
-          value={value}
-          placeholder={question.text}
-          onChange={(e) => onChange(question.id, e.target.value)}
-          sx={{
-            padding: "8px",
-            width: "100%",
-            borderRadius: "md",
-            borderColor: "neutral.outlinedBorder",
-            "&:hover": {
-              borderColor: "neutral.outlinedHoverBorder",
-            },
-          }}
-          disabled={disabled}
-        />
-      </Box>
-    );
-  } else if (question.type === "option") {
+  // if (question.type === "text") {
+  //   return (
+  //     <Box
+  //       sx={{
+  //         width: "100%",
+  //         mb: 2,
+  //         // marginBottom: "16px",
+  //       }}
+  //     >
+  //       <FormLabel
+  //         id={`question-${question.id}`}
+  //         sx={{
+  //           mb: 2,
+  //           fontWeight: "xl",
+  //           textTransform: "uppercase",
+  //           fontSize: "xs",
+  //           letterSpacing: "0.15rem",
+  //         }}
+  //       >
+  //         {question.text}
+  //       </FormLabel>
+  //       <Input
+  //         type="text"
+  //         value={value}
+  //         placeholder={question.text}
+  //         onChange={(e) => onChange(question.id, e.target.value)}
+  //         sx={{
+  //           padding: "8px",
+  //           width: "100%",
+  //           borderRadius: "md",
+  //           borderColor: "neutral.outlinedBorder",
+  //           "&:hover": {
+  //             borderColor: "neutral.outlinedHoverBorder",
+  //           },
+  //         }}
+  //         disabled={disabled}
+  //       />
+  //     </Box>
+  //   );
+  // } else
+  if (question.type === "option") {
     return (
       <Box
         mt={3}
         sx={{
           // backgroundColor: "red",
           width: "100%",
-          marginBottom: "16px",
+          mb: 1,
         }}
       >
         <FormLabel

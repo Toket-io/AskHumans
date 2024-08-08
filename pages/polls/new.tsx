@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import Head from "next/head";
 import Layout from "../../components/layout";
-import { NewPoll, Question } from "../../lib/types";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import { NewPoll, Poll, Question } from "../../lib/types";
+import { useRouter } from "next/router";
 
 import { Box, Button, Container, Input, Typography, Switch } from "@mui/joy";
 import Snackbar from "../../components/snackbar";
 
 export default function NewPollPage() {
+  const router = useRouter();
   const [pollTitle, setPollTitle] = useState("");
   const [questions, setQuestions] = useState<Question[]>([
     { id: 1, text: "", type: "option", options: [""], multipleAnswers: false },
@@ -76,6 +77,7 @@ export default function NewPollPage() {
     if (questions.length < 1) return false;
     for (const question of questions) {
       if (!question.text.trim()) return false;
+      if (question.options.length < 2) return false;
       for (const option of question.options) {
         if (!option.trim()) return false;
       }
@@ -111,11 +113,14 @@ export default function NewPollPage() {
         throw new Error(`Error: ${response.statusText}`);
       }
 
-      const data = await response.json();
+      const data: Poll = await response.json();
       setSnackbarMessage("Poll created successfully!");
       setSnackbarSeverity("success");
       setSnackbarOpen(true);
-      console.log("New Poll:", data);
+
+      setTimeout(() => {
+        router.push(`/polls/${data.id}`);
+      }, 1500);
     } catch (error) {
       setSnackbarMessage(`Failed to create poll: ${error.message}`);
       setSnackbarSeverity("error");
@@ -170,7 +175,7 @@ export default function NewPollPage() {
                   border: "1px solid #ccc",
                   padding: "16px",
                   marginBottom: "16px",
-                  borderRadius: 2,
+                  borderRadius: "8px",
                 }}
               >
                 <Typography level="h3" sx={{ mb: 2 }}>
@@ -248,7 +253,7 @@ export default function NewPollPage() {
               variant="soft"
               color="neutral"
               onClick={addQuestion}
-              sx={{ mb: 3 }}
+              sx={{ mb: 3, mr: 2 }}
             >
               Add Question
             </Button>

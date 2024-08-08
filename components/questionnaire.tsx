@@ -21,7 +21,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ pollId }) => {
   const { data: session } = useSession();
   const [answers, setAnswers] = useState<{ [key: number]: string }>({});
   const [poll, setPoll] = useState<Poll | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [isAnswered, setIsAnswered] = useState(false);
   const [responseCount, setResponseCount] = useState<number | null>(null);
@@ -33,21 +33,23 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ pollId }) => {
   const userId = session?.user?.name ?? null;
 
   useEffect(() => {
-    fetchPoll();
-    if (userId) {
+    const fetchData = async () => {
       setLoading(true);
-      fetch(`/api/polls/${pollId}/answers/${userId}`)
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.answers) {
-            setAnswers(data.answers);
-            setResponseCount(data.count);
-            setIsAnswered(true);
-          }
-        })
-        .catch((error) => console.error("Error fetching user answers:", error))
-        .finally(() => setLoading(false));
-    }
+      try {
+        await fetchPoll();
+        if (userId) {
+          await fetchUserAnswers();
+        }
+      } catch (error) {
+        setSnackbarMessage("Error al cargar la encuesta.");
+        setSnackbarSeverity("error");
+        setSnackbarOpen(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, [userId]);
 
   const fetchPoll = async () => {
@@ -57,7 +59,21 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ pollId }) => {
       console.log("response", data);
       setPoll(data);
     } catch (error) {
-      console.error("Error fetching poll:", error);
+      throw error;
+    }
+  };
+
+  const fetchUserAnswers = async () => {
+    try {
+      const response = await fetch(`/api/polls/${pollId}/answers/${userId}`);
+      const data = await response.json();
+      if (data.answers) {
+        setAnswers(data.answers);
+        setResponseCount(data.count);
+        setIsAnswered(true);
+      }
+    } catch (error) {
+      throw error;
     }
   };
 
@@ -120,14 +136,18 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ pollId }) => {
       sx={{
         padding: "16px",
         maxWidth: "600px",
-        margin: "0 auto",
         display: "flex",
         flexDirection: "column",
         gap: "12px",
       }}
+      my={0}
+      mx="auto"
     >
-      <Typography level="h3" mb={3}>
+      <Typography level="h4" mb={2}>
         Bienvenido a la primer encuesta de humanos verificados.
+      </Typography>
+      <Typography level="h2" mb={2}>
+        {poll.title}
       </Typography>
       {!userId && <SignInDisclosureBanner />}
       {isAnswered && <SuccessBanner totalResponses={responseCount} />}
