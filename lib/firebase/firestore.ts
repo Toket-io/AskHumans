@@ -20,7 +20,7 @@ import {
 
 import { db } from "./clientApp";
 import { questions } from "../../pages";
-import { Poll, Answer, PollResult, NewPoll } from "../types"; // Adjust the import based on your chosen structure
+import { Poll, Answer, PollResult, NewPoll, FormattedResults } from "../types"; // Adjust the import based on your chosen structure
 
 // export async function getQuizResultsByUserIdServer(db, userId: string) {
 //   if (!userId) {
@@ -247,9 +247,10 @@ export async function getPollResultsCount(pollId: string) {
   return formattedCount;
 }
 
-export async function getPollResults(pollId: string) {
+export async function getPollResults(
+  pollId: string
+): Promise<FormattedResults> {
   const poll = await getPollById(pollId);
-  // console.log("*AC questions: ", questions);
 
   const answersQuery = query(
     collection(db, "polls", pollId, "answers"),
@@ -258,7 +259,7 @@ export async function getPollResults(pollId: string) {
   const querySnapshot = await getDocs(answersQuery);
 
   // Initialize counters for each question's options
-  const results = {};
+  const results: { [key: string]: { [option: string]: number } } = {};
   poll.questions.forEach((question) => {
     results[question.id] = {};
     question.options.forEach((option) => {
@@ -266,26 +267,23 @@ export async function getPollResults(pollId: string) {
     });
   });
 
-  // // Aggregate results
+  // Aggregate results
   querySnapshot.forEach((doc) => {
-    const data: PollResult = doc.data(); // TODO: Fix this
-    console.log("*AC data: ", data);
+    const data: PollResult = doc.data() as PollResult;
     Object.keys(data.answers).forEach((key) => {
-      console.log("*AC key: ", key);
       if (key !== "userId" && key !== "timestamp") {
         results[key][data.answers[key]]++;
-      } else {
-        console.log("*AC ELSEEEE: ", key);
       }
     });
   });
 
   // Format results as required
-  const formattedResults = {};
-  Object.keys(results).forEach((key) => {
-    formattedResults[key] = {
-      labels: Object.keys(results[key]),
-      data: Object.values(results[key]),
+  const formattedResults: FormattedResults = {};
+  poll.questions.forEach((question) => {
+    formattedResults[question.id] = {
+      question: question.text,
+      labels: Object.keys(results[question.id]),
+      data: Object.values(results[question.id]),
     };
   });
 

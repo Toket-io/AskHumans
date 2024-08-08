@@ -28,3 +28,11 @@ export interface PollResult {
   answers: Answer[];
   timestamp: Date;
 }
+
+export interface FormattedResults {
+  [key: string]: {
+    question: string;
+    labels: string[];
+    data: number[];
+  };
+}
