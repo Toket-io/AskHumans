@@ -160,7 +160,7 @@ export async function createNewPoll(newPoll: NewPoll): Promise<Poll> {
   }
 }
 
-export async function getPollById(pollId: string) {
+export async function getPollById(pollId: string): Promise<Poll> {
   if (!pollId) {
     throw new Error("Error: Invalid request data received");
   }
@@ -172,9 +172,13 @@ export async function getPollById(pollId: string) {
     throw new Error("No such document!");
   }
 
+  const pollSnapData = pollSnap.data();
+
   return {
     id: pollSnap.id,
-    ...pollSnap.data(),
+    userId: pollSnapData.userId,
+    title: pollSnapData.title,
+    questions: pollSnapData.questions,
     timestamp: pollSnap.data().timestamp.toDate(),
   };
 }
@@ -232,6 +236,60 @@ export async function getPollResultsByUserId(pollId: string, userId: string) {
     ...userAnswersSnap.data(),
     timestamp: userAnswersSnap.data().timestamp.toDate(),
   };
+}
+
+export async function getPollResultsCount(pollId: string) {
+  const q = query(collection(db, "polls", pollId, "answers"));
+  const snapshot = await getCountFromServer(q);
+
+  // Format the count with thousands separator
+  const formattedCount = snapshot.data().count.toLocaleString("es-AR");
+  return formattedCount;
+}
+
+export async function getPollResults(pollId: string) {
+  const poll = await getPollById(pollId);
+  // console.log("*AC questions: ", questions);
+
+  const answersQuery = query(
+    collection(db, "polls", pollId, "answers"),
+    orderBy("timestamp", "desc")
+  );
+  const querySnapshot = await getDocs(answersQuery);
+
+  // Initialize counters for each question's options
+  const results = {};
+  poll.questions.forEach((question) => {
+    results[question.id] = {};
+    question.options.forEach((option) => {
+      results[question.id][option] = 0;
+    });
+  });
+
+  // // Aggregate results
+  querySnapshot.forEach((doc) => {
+    const data: PollResult = doc.data(); // TODO: Fix this
+    console.log("*AC data: ", data);
+    Object.keys(data.answers).forEach((key) => {
+      console.log("*AC key: ", key);
+      if (key !== "userId" && key !== "timestamp") {
+        results[key][data.answers[key]]++;
+      } else {
+        console.log("*AC ELSEEEE: ", key);
+      }
+    });
+  });
+
+  // Format results as required
+  const formattedResults = {};
+  Object.keys(results).forEach((key) => {
+    formattedResults[key] = {
+      labels: Object.keys(results[key]),
+      data: Object.values(results[key]),
+    };
+  });
+
+  return formattedResults;
 }
 
 // TODO: Check all throw errors and validation

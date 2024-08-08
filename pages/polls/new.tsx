@@ -6,9 +6,11 @@ import { useRouter } from "next/router";
 
 import { Box, Button, Container, Input, Typography, Switch } from "@mui/joy";
 import Snackbar from "../../components/snackbar";
+import { useSession } from "next-auth/react";
 
 export default function NewPollPage() {
   const router = useRouter();
+  const { data: session } = useSession();
   const [pollTitle, setPollTitle] = useState("");
   const [questions, setQuestions] = useState<Question[]>([
     { id: 1, text: "", type: "option", options: [""], multipleAnswers: false },
@@ -98,7 +100,11 @@ export default function NewPollPage() {
 
     setLoading(true);
 
-    const newPoll: NewPoll = { title: pollTitle, questions };
+    const newPoll: NewPoll = {
+      title: pollTitle,
+      questions,
+      userId: session.user.name,
+    };
 
     try {
       const response = await fetch("/api/polls", {
