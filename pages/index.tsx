@@ -13,12 +13,7 @@ export const questions = [
     id: 2,
     text: "¿Dónde crees que debería celebrarse el partido de despedida?",
     type: "option",
-    options: [
-      "Monumental 🇦🇷",
-      "Gigante de Arroyito 🇦🇷",
-      "Bernabeu 🇪🇸",
-      "Ninguno",
-    ],
+    options: ["Monumental 🇦🇷", "Gigante de Arroyito 🇦🇷", "Bernabeu 🇪🇸", "Otro"],
   },
 ];
 

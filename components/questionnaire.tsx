@@ -10,6 +10,7 @@ import FormControl from "@mui/joy/FormControl";
 import FormLabel from "@mui/joy/FormLabel";
 import FormHelperText from "@mui/joy/FormHelperText";
 import { CircularProgress } from "@mui/joy";
+import { track } from "@vercel/analytics";
 
 interface QuestionnaireProps {
   questions: {
@@ -105,12 +106,10 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ questions }) => {
       <Typography level="h3" mb={3}>
         Bienvenido a la primer encuesta de humanos verificados.
       </Typography>
-
       {/* Show the SignInDisclosureBanner if the user is unauthenticated */}
       {!userId && <SignInDisclosureBanner />}
       {/* Show the SuccessBanner if the quiz is already answered */}
       {isAnswered && <SuccessBanner totalResponses={responseCount} />}
-
       {questions.map((question) => (
         <FormControl key={question.id}>
           <Question
@@ -122,7 +121,6 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ questions }) => {
           <FormHelperText></FormHelperText>
         </FormControl>
       ))}
-
       <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
         <Button
           type="submit"
@@ -142,6 +140,19 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ questions }) => {
           Enviar
         </Button>
       </Box>
+
+      <Typography level="body-sm" mt={3} textAlign={"center"}>
+        Developed by{" "}
+        <a
+          href="https://blockchainrd.xyz"
+          style={{ color: "gray" }}
+          onClick={(e) => {
+            track("blockchainrd_link_click");
+          }}
+        >
+          Blockchain R&D
+        </a>
+      </Typography>
     </Box>
   );
 };
