@@ -2,17 +2,10 @@ import React, { useState } from "react";
 import Head from "next/head";
 import Layout from "../../components/layout";
 import { NewPoll, Question } from "../../lib/types";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
-import {
-  Box,
-  Button,
-  Container,
-  Input,
-  Typography,
-  Switch,
-  Snackbar,
-  Alert,
-} from "@mui/joy";
+import { Box, Button, Container, Input, Typography, Switch } from "@mui/joy";
+import Snackbar from "../../components/snackbar";
 
 export default function NewPollPage() {
   const [pollTitle, setPollTitle] = useState("");
@@ -22,9 +15,9 @@ export default function NewPollPage() {
   const [loading, setLoading] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">(
-    "success"
-  );
+  const [snackbarSeverity, setSnackbarSeverity] = useState<
+    "success" | "warning" | "error"
+  >("success");
 
   const addQuestion = () => {
     setQuestions([
@@ -236,6 +229,7 @@ export default function NewPollPage() {
                 </Button>
                 <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
                   <Switch
+                    disabled={true}
                     checked={question.multipleAnswers}
                     onChange={(e) =>
                       handleMultipleAnswersChange(qIndex, e.target.checked)
@@ -266,9 +260,9 @@ export default function NewPollPage() {
             open={snackbarOpen}
             onClose={() => setSnackbarOpen(false)}
             autoHideDuration={6000}
-          >
-            <Alert severity={snackbarSeverity}>{snackbarMessage}</Alert>
-          </Snackbar>
+            severity={snackbarSeverity}
+            message={snackbarMessage}
+          />
         </Box>
       </Container>
     </Layout>

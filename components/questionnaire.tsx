@@ -7,33 +7,36 @@ import { useSession } from "next-auth/react";
 import SuccessBanner from "./successBanner";
 import SignInDisclosureBanner from "./signInDisclousureBanner";
 import FormControl from "@mui/joy/FormControl";
-import FormLabel from "@mui/joy/FormLabel";
 import FormHelperText from "@mui/joy/FormHelperText";
 import { CircularProgress } from "@mui/joy";
 import { track } from "@vercel/analytics";
+import { Poll } from "../lib/types";
+import Snackbar from "./snackbar";
 
 interface QuestionnaireProps {
-  questions: {
-    id: number;
-    text: string;
-    type: string;
-    options?: string[];
-  }[];
+  pollId: string;
 }
 
-const Questionnaire: React.FC<QuestionnaireProps> = ({ questions }) => {
+const Questionnaire: React.FC<QuestionnaireProps> = ({ pollId }) => {
   const { data: session } = useSession();
   const [answers, setAnswers] = useState<{ [key: number]: string }>({});
+  const [poll, setPoll] = useState<Poll | null>(null);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [isAnswered, setIsAnswered] = useState(false);
   const [responseCount, setResponseCount] = useState<number | null>(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<
+    "success" | "warning" | "error"
+  >("success");
   const userId = session?.user?.name ?? null;
 
   useEffect(() => {
+    fetchPoll();
     if (userId) {
       setLoading(true);
-      fetch(`/api/answers/${userId}`)
+      fetch(`/api/polls/${pollId}/answers/${userId}`)
         .then((response) => response.json())
         .then((data) => {
           if (data.answers) {
@@ -47,6 +50,17 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ questions }) => {
     }
   }, [userId]);
 
+  const fetchPoll = async () => {
+    try {
+      const response = await fetch(`/api/polls/${pollId}`);
+      const data = await response.json();
+      console.log("response", data);
+      setPoll(data);
+    } catch (error) {
+      console.error("Error fetching poll:", error);
+    }
+  };
+
   const handleChange = (id: number, answer: string) => {
     setAnswers({ ...answers, [id]: answer });
   };
@@ -55,7 +69,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ questions }) => {
     e.preventDefault();
     if (!isAnswered && userId) {
       setSubmitting(true);
-      fetch(`/api/answers/${userId}`, {
+      fetch(`/api/polls/${pollId}/answers/${userId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -65,12 +79,21 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ questions }) => {
         .then((response) => {
           if (response.ok) {
             setIsAnswered(true);
-            alert("¡Respuestas enviadas con éxito!");
+            setSnackbarMessage("¡Respuestas enviadas con éxito!");
+            setSnackbarSeverity("success");
+            setSnackbarOpen(true);
           } else {
-            alert("Error al enviar las respuestas.");
+            setSnackbarMessage("Error al enviar las respuestas.");
+            setSnackbarSeverity("error");
+            setSnackbarOpen(true);
           }
         })
-        .catch((error) => console.error("Error submitting answers:", error))
+        .catch((error) => {
+          console.error("Error submitting answers:", error);
+          setSnackbarMessage("Error al enviar las respuestas.");
+          setSnackbarSeverity("error");
+          setSnackbarOpen(true);
+        })
         .finally(() => setSubmitting(false));
     }
   };
@@ -100,27 +123,26 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ questions }) => {
         margin: "0 auto",
         display: "flex",
         flexDirection: "column",
-        // gap: "12px",
+        gap: "12px",
       }}
     >
       <Typography level="h3" mb={3}>
         Bienvenido a la primer encuesta de humanos verificados.
       </Typography>
-      {/* Show the SignInDisclosureBanner if the user is unauthenticated */}
       {!userId && <SignInDisclosureBanner />}
-      {/* Show the SuccessBanner if the quiz is already answered */}
       {isAnswered && <SuccessBanner totalResponses={responseCount} />}
-      {questions.map((question) => (
-        <FormControl key={question.id}>
-          <Question
-            question={question}
-            onChange={handleChange}
-            disabled={isAnswered}
-            value={answers[question.id] || ""}
-          />
-          <FormHelperText></FormHelperText>
-        </FormControl>
-      ))}
+      {poll != null &&
+        poll.questions.map((question) => (
+          <FormControl key={question.id}>
+            <Question
+              question={question}
+              onChange={handleChange}
+              disabled={isAnswered}
+              value={answers[question.id] || ""}
+            />
+            <FormHelperText></FormHelperText>
+          </FormControl>
+        ))}
       <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
         <Button
           type="submit"
@@ -140,7 +162,6 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ questions }) => {
           Enviar
         </Button>
       </Box>
-
       <Typography level="body-sm" mt={3} textAlign={"center"}>
         Developed by{" "}
         <a
@@ -153,6 +174,14 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ questions }) => {
           Blockchain R&D
         </a>
       </Typography>
+
+      <Snackbar
+        open={snackbarOpen}
+        onClose={() => setSnackbarOpen(false)}
+        autoHideDuration={6000}
+        severity={snackbarSeverity}
+        message={snackbarMessage}
+      />
     </Box>
   );
 };
