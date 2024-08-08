@@ -6,14 +6,10 @@ import CircularProgress from "@mui/joy/CircularProgress";
 import Box from "@mui/joy/Box";
 import Typography from "@mui/joy/Typography";
 import { useRouter } from "next/router";
-
-interface AnswersData {
-  labels: string[];
-  data: number[];
-}
+import { FormattedResults } from "../../../lib/types";
 
 interface PollData {
-  answers: { [key: number]: AnswersData };
+  answers: FormattedResults;
   count: number;
 }
 
@@ -21,7 +17,7 @@ const Results: React.FC = () => {
   const router = useRouter();
   const { pollId } = router.query;
 
-  const [data, setData] = useState<{ [key: number]: AnswersData } | null>(null);
+  const [data, setData] = useState<FormattedResults | null>(null);
   const [responseCount, setResponseCount] = useState<number | null>(null);
 
   useEffect(() => {
@@ -85,7 +81,7 @@ const Results: React.FC = () => {
             key={questionId}
             labels={answerData.labels}
             data={answerData.data}
-            title={`Question ${questionId}`}
+            title={answerData.question}
             chartId={questionId}
           />
         ))}
