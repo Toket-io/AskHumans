@@ -73,6 +73,7 @@ export default function NewPollPage() {
 
   const validatePoll = (): boolean => {
     if (!pollTitle.trim()) return false;
+    if (questions.length < 1) return false;
     for (const question of questions) {
       if (!question.text.trim()) return false;
       for (const option of question.options) {
@@ -141,17 +142,18 @@ export default function NewPollPage() {
             boxSizing: "border-box",
           }}
         >
-          <Typography level="h1" sx={{ mb: 2 }}>
-            Create a New Poll
+          <Typography level="h1" mt={2}>
+            New Poll
           </Typography>
           <Box
             component="form"
             onSubmit={handleSubmit}
-            sx={{ width: "100%", maxWidth: "600px", mt: 2 }}
+            mt={2}
+            sx={{ width: "100%", maxWidth: "600px" }}
           >
             <Box sx={{ mb: 3 }}>
               <Typography level="h2" sx={{ mb: 1 }}>
-                Poll Title
+                Title
               </Typography>
               <Input
                 type="text"
@@ -188,6 +190,9 @@ export default function NewPollPage() {
                   fullWidth
                   sx={{ mb: 2 }}
                 />
+                <Typography level="body-lg" sx={{ mb: 1 }}>
+                  Options
+                </Typography>
                 {question.options.map((option, oIndex) => (
                   <Box
                     key={oIndex}
