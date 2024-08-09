@@ -160,6 +160,27 @@ export async function createNewPoll(newPoll: NewPoll): Promise<Poll> {
   }
 }
 
+export async function getGalleryPolls(): Promise<Poll[]> {
+  const q = query(collection(db, "polls"), orderBy("timestamp", "desc"));
+  const querySnapshot = await getDocs(q);
+
+  const polls: Poll[] = [];
+
+  querySnapshot.forEach((doc) => {
+    const pollData = doc.data();
+    const poll: Poll = {
+      id: doc.id,
+      userId: pollData.userId,
+      title: pollData.title,
+      questions: pollData.questions,
+      timestamp: pollData.timestamp.toDate(),
+    };
+    polls.push(poll);
+  });
+
+  return polls;
+}
+
 export async function getPollById(pollId: string): Promise<Poll> {
   if (!pollId) {
     throw new Error("Error: Invalid request data received");
