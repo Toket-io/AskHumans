@@ -1,6 +1,6 @@
 import Head from "next/head";
-import Questionnaire from "../components/questionnaire";
 import Layout from "../components/layout";
+import PollsGallery from "../components/pollGallery";
 
 export const questions = [
   {
@@ -35,7 +35,7 @@ export default function Home() {
           boxSizing: "border-box",
         }}
       >
-        <Questionnaire questions={questions} />
+        <PollsGallery />
       </main>
     </Layout>
   );
