@@ -142,18 +142,15 @@ export async function createNewPoll(newPoll: NewPoll): Promise<Poll> {
   try {
     // Save new poll
     const timestamp = new Date();
+    const isVisible = false;
 
     await setDoc(pollRef, {
       ...newPoll,
       timestamp: timestamp,
+      isVisible,
     });
 
-    const poll: Poll = {
-      id: pollRef.id,
-      ...newPoll,
-      timestamp: timestamp,
-    };
-
+    const poll = await getPollById(pollRef.id);
     return poll;
   } catch (e) {
     throw new Error("Error writing document: " + e);
@@ -161,7 +158,11 @@ export async function createNewPoll(newPoll: NewPoll): Promise<Poll> {
 }
 
 export async function getGalleryPolls(): Promise<Poll[]> {
-  const q = query(collection(db, "polls"), orderBy("timestamp", "desc"));
+  const q = query(
+    collection(db, "polls"),
+    where("isVisible", "==", true),
+    orderBy("timestamp", "desc")
+  );
   const querySnapshot = await getDocs(q);
 
   const polls: Poll[] = [];
@@ -174,6 +175,8 @@ export async function getGalleryPolls(): Promise<Poll[]> {
       title: pollData.title,
       questions: pollData.questions,
       timestamp: pollData.timestamp.toDate(),
+      isVisible: pollData.isVisible,
+      updated: pollData.updated?.toDate(),
     };
     polls.push(poll);
   });
@@ -200,7 +203,9 @@ export async function getPollById(pollId: string): Promise<Poll> {
     userId: pollSnapData.userId,
     title: pollSnapData.title,
     questions: pollSnapData.questions,
-    timestamp: pollSnap.data().timestamp.toDate(),
+    timestamp: pollSnapData.timestamp.toDate(),
+    isVisible: pollSnapData.isVisible,
+    updated: pollSnapData.updated?.toDate(),
   };
 }
 
@@ -309,6 +314,27 @@ export async function getPollResults(
   });
 
   return formattedResults;
+}
+
+export async function updatePoll(
+  pollId: string,
+  isVisible: boolean
+): Promise<Poll> {
+  const pollRef = doc(db, "polls", pollId);
+  const pollSnap = await getDoc(pollRef);
+
+  if (!pollSnap.exists()) {
+    throw new Error("No such document!");
+  }
+
+  await updateDoc(pollRef, {
+    isVisible: isVisible,
+    updated: new Date(),
+  });
+
+  const updatedPoll = await getPollById(pollId);
+
+  return updatedPoll;
 }
 
 // TODO: Check all throw errors and validation

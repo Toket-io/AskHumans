@@ -11,6 +11,7 @@ import {
   getPollById,
   getQuizResultsByUserId,
   saveQuizResults,
+  updatePoll,
 } from "../../../../lib/firebase/firestore";
 
 export default async function handler(
@@ -23,11 +24,11 @@ export default async function handler(
     case "GET":
       handleGet(req, res);
       break;
-    case "POST":
-      handlePost(req, res);
+    case "PATCH":
+      handlePatch(req, res);
       break;
     default:
-      res.setHeader("Allow", ["GET", "POST"]);
+      res.setHeader("Allow", ["GET", "PATCH"]);
       res.status(405).end(`Method ${method} Not Allowed`);
   }
 }
@@ -56,19 +57,31 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-async function handlePost(req: NextApiRequest, res: NextApiResponse) {
-  const { userId, answers } = req.body;
-
+async function handlePatch(req: NextApiRequest, res: NextApiResponse) {
   // TODO: Check protected routes
+  const session = await getServerSession(req, res, authOptions);
 
-  if (!userId || !answers) {
-    res.status(400).json({ error: "User ID and data are required" });
+  const pollId: string = req.query.pollId as string;
+  const isVisible: boolean = req.body.isVisible;
+
+  if (typeof isVisible !== "boolean") {
+    res.status(400).json({ error: "isVisible must be a boolean value" });
     return;
   }
 
-  const saveResult = await saveQuizResults(userId, answers);
-  console.log("*AC saveResult: ", saveResult);
+  if (!pollId) {
+    res.status(400).json({ error: "Poll ID is required" });
+    return;
+  }
 
-  // Process the userId and data for POST request
-  res.status(200).json({ message: `Data received for user ID ${userId}` });
+  try {
+    const poll = await updatePoll(pollId, isVisible);
+    return res.send({
+      ...poll,
+    });
+  } catch (error) {
+    console.error("Error updating poll: ", error);
+    res.status(500).json({ error: "Error updating poll" });
+    return;
+  }
 }

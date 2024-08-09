@@ -15,6 +15,8 @@ export interface NewPoll {
 export interface Poll extends NewPoll {
   id: string;
   timestamp: Date;
+  updated: Date;
+  isVisible: boolean;
 }
 
 export interface Answer {
